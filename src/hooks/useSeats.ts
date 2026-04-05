@@ -1,13 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Seat } from '../types';
-import {
-  fetchSeats,
-  registerSeat,
-  cancelSeat,
-  adminMoveSeat,
-  adminToggleLeader,
-  adminClearSeat,
-} from '../services/sheetsApi';
+import { fetchSeats, registerSeat, cancelSeat, adminMoveSeat, adminToggleLeader, adminClearSeat } from '../services/sheetsApi';
 
 function initLocalSeats(): Seat[] {
   const seats: Seat[] = [];

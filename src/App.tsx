@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Seat } from './types';
 import { useSeats } from './hooks/useSeats';
-import { getScriptUrl, getMyRegistration, clearMyRegistration, fetchPrayerTopics, savePrayerTopics } from './services/sheetsApi';
+import { fetchPrayerTopics, savePrayerTopics } from './services/sheetsApi';
 import SeatMap from './components/SeatMap';
 import UserModal from './components/UserModal';
 import AdminPanel from './components/AdminPanel';
-import ConfigModal from './components/ConfigModal';
 import LoginPage from './components/LoginPage';
-
-type ModalType = 'user' | 'config' | null;
 
 export default function App() {
   const {
@@ -23,31 +20,17 @@ export default function App() {
   } = useSeats();
 
   const [currentUser, setCurrentUser] = useState<string | null>(null);
-  const [modal, setModal] = useState<ModalType>(null);
+  const [showUserModal, setShowUserModal] = useState(false);
   const [selectedSeat, setSelectedSeat] = useState<Seat | null>(null);
   const [isAdminMode, setIsAdminMode] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
   const [moveSrcSeat, setMoveSrcSeat] = useState<Seat | null>(null);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
-  const [prayerTopics, setPrayerTopics] = useState<string>(
-    () => localStorage.getItem('prayer_meeting_prayer_topics') ?? ''
-  );
-
-  const handleSavePrayerTopics = async (text: string) => {
-    const res = await savePrayerTopics(adminPassword, text);
-    if (res.success) {
-      setPrayerTopics(text);
-      showToast('기도제목이 저장되었습니다.');
-    } else {
-      showToast(res.error ?? '저장 실패', false);
-    }
-  };
+  const [prayerTopics, setPrayerTopics] = useState<string>('');
 
   useEffect(() => {
-    if (getScriptUrl()) {
-      loadSeats();
-      fetchPrayerTopics().then(setPrayerTopics);
-    }
+    loadSeats();
+    fetchPrayerTopics().then(setPrayerTopics);
   }, [loadSeats]);
 
   const showToast = (msg: string, ok = true) => {
@@ -71,7 +54,7 @@ export default function App() {
     setAdminPassword('');
     setSelectedSeat(null);
     setMoveSrcSeat(null);
-    setModal(null);
+    setShowUserModal(false);
   };
 
   const handleSeatClick = (seat: Seat) => {
@@ -87,21 +70,8 @@ export default function App() {
       }
       setSelectedSeat(seat);
     } else {
-      if (seat.name === null) {
-        const my = getMyRegistration();
-        if (my && my.seatId !== seat.id) {
-          // 관리자가 비웠을 수 있으므로 실제 데이터 확인
-          const actualSeat = seats.find((s) => s.id === my.seatId);
-          if (actualSeat && actualSeat.name === my.name) {
-            showToast(`이미 ${my.seatId}번 자리에 등록되어 있습니다.`, false);
-            return;
-          }
-          // 실제로 비워진 경우 localStorage 초기화 후 진행
-          clearMyRegistration();
-        }
-      }
       setSelectedSeat(seat);
-      setModal('user');
+      setShowUserModal(true);
     }
   };
 
@@ -141,8 +111,7 @@ export default function App() {
     if (err) {
       showToast(err, false);
     } else {
-      const wasLeader = selectedSeat.isGroupLeader;
-      showToast(wasLeader ? '조장 해제 완료' : '조장 지정 완료');
+      showToast(selectedSeat.isGroupLeader ? '조장 해제 완료' : '조장 지정 완료');
     }
     setSelectedSeat(null);
   };
@@ -159,9 +128,18 @@ export default function App() {
     setSelectedSeat(null);
   };
 
+  const handleSavePrayerTopics = async (text: string) => {
+    const res = await savePrayerTopics(adminPassword, text);
+    if (res.success) {
+      setPrayerTopics(text);
+      showToast('기도제목이 저장되었습니다.');
+    } else {
+      showToast(res.error ?? '저장 실패', false);
+    }
+  };
+
   const occupied = seats.filter((s) => s.name !== null).length;
 
-  // 로그인 전: 입장 화면
   if (!currentUser) {
     return <LoginPage onEnter={handleEnter} onAdminEnter={handleAdminEnter} prayerTopics={prayerTopics} />;
   }
@@ -182,16 +160,6 @@ export default function App() {
           >
             {loading ? '로딩 중...' : '⟳ 새로고침'}
           </button>
-
-          {isAdminMode && (
-            <button
-              onClick={() => setModal('config')}
-              className="px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-gray-600 hover:bg-gray-50 shadow-sm transition-colors"
-              title="Google Sheets 연동 설정"
-            >
-              ⚙ 설정
-            </button>
-          )}
 
           {isAdminMode && (
             <button
@@ -241,8 +209,8 @@ export default function App() {
         />
       </main>
 
-      {/* 모달들 */}
-      {modal === 'user' && selectedSeat && (
+      {/* 유저 모달 */}
+      {showUserModal && selectedSeat && (
         <UserModal
           seat={selectedSeat}
           userName={isAdminMode ? undefined : currentUser}
@@ -250,24 +218,17 @@ export default function App() {
             const err = await handleRegister(selectedSeat.id, name);
             if (err) { showToast(err, false); return; }
             showToast(`${name} 님 등록 완료!`);
-            setModal(null);
+            setShowUserModal(false);
             setSelectedSeat(null);
           }}
           onCancel={async (name) => {
             const err = await handleCancel(selectedSeat.id, name);
             if (err) { showToast(err, false); return; }
             showToast('예약이 취소되었습니다.');
-            setModal(null);
+            setShowUserModal(false);
             setSelectedSeat(null);
           }}
-          onClose={() => { setModal(null); setSelectedSeat(null); }}
-        />
-      )}
-
-      {modal === 'config' && (
-        <ConfigModal
-          onClose={() => setModal(null)}
-          onSave={loadSeats}
+          onClose={() => { setShowUserModal(false); setSelectedSeat(null); }}
         />
       )}
 
