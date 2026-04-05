@@ -2,6 +2,7 @@ import { Seat, ApiResponse } from '../types';
 
 const SCRIPT_URL_KEY = 'prayer_meeting_script_url';
 const MY_SEAT_KEY = 'prayer_meeting_my_seat';
+const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCngNJepe7yOpmps8W8JN4fzwCdn81lis9uCfglzV3G_Q-JnbHfNrkED0ST18G_By-/exec';
 
 export function getMyRegistration(): { seatId: number; name: string } | null {
   const raw = localStorage.getItem(MY_SEAT_KEY);
@@ -17,7 +18,7 @@ export function clearMyRegistration() {
 }
 
 export function getScriptUrl(): string {
-  return localStorage.getItem(SCRIPT_URL_KEY) ?? '';
+  return localStorage.getItem(SCRIPT_URL_KEY) ?? DEFAULT_SCRIPT_URL;
 }
 
 export function setScriptUrl(url: string): void {
