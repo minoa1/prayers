@@ -18,7 +18,7 @@ export function clearMyRegistration() {
 }
 
 export function getScriptUrl(): string {
-  return localStorage.getItem(SCRIPT_URL_KEY) ?? DEFAULT_SCRIPT_URL;
+  return localStorage.getItem(SCRIPT_URL_KEY) || DEFAULT_SCRIPT_URL;
 }
 
 export function setScriptUrl(url: string): void {
