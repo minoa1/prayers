@@ -13,7 +13,6 @@ export default function App() {
     loading,
     loadSeats,
     handleRegister,
-    handleCancel,
     handleAdminMove,
     handleAdminToggleLeader,
     handleAdminClear,
@@ -70,13 +69,16 @@ export default function App() {
       }
       setSelectedSeat(seat);
     } else {
-      // 빈 자리 클릭 시 이미 등록된 자리가 있는지 확인
-      if (seat.name === null) {
-        const mySeat = seats.find((s) => s.name === currentUser);
-        if (mySeat) {
-          showToast(`이미 ${mySeat.row}-${mySeat.col} 자리에 등록되어 있습니다.`, false);
-          return;
-        }
+      // 이미 예약된 자리는 클릭 불가
+      if (seat.name !== null) {
+        showToast('이미 예약된 자리입니다.', false);
+        return;
+      }
+      // 본인이 이미 다른 자리에 등록되어 있으면 차단
+      const mySeat = seats.find((s) => s.name === currentUser);
+      if (mySeat) {
+        showToast(`이미 ${mySeat.row}-${mySeat.col} 자리에 등록되어 있습니다.`, false);
+        return;
       }
       setSelectedSeat(seat);
       setShowUserModal(true);
@@ -231,13 +233,6 @@ export default function App() {
             const err = await handleRegister(selectedSeat.id, name);
             if (err) { showToast(err, false); return; }
             showToast(`${name} 님 등록 완료!`);
-            setShowUserModal(false);
-            setSelectedSeat(null);
-          }}
-          onCancel={async (name) => {
-            const err = await handleCancel(selectedSeat.id, name);
-            if (err) { showToast(err, false); return; }
-            showToast('예약이 취소되었습니다.');
             setShowUserModal(false);
             setSelectedSeat(null);
           }}
