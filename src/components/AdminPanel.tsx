@@ -120,12 +120,12 @@ export default function AdminPanel({
             </div>
           )}
 
-          {!selectedSeat.name && moveSrcSeat && (
+          {moveSrcSeat && (
             <button
               onClick={() => onConfirmMove(selectedSeat.id)}
               className="w-full text-xs bg-green-500 hover:bg-green-600 text-white rounded-lg py-1.5 transition-colors"
             >
-              이 자리로 이동
+              {selectedSeat.name ? '자리 바꾸기' : '이 자리로 이동'}
             </button>
           )}
         </div>
@@ -134,8 +134,11 @@ export default function AdminPanel({
       {selectedSeat && moveSrcSeat && (
         <div>
           <p className="text-xs text-gray-600 mb-2">
-            <strong>{moveSrcSeat.name}</strong> →{' '}
-            <strong>{selectedSeat.id}번 자리</strong>로 이동하시겠습니까?
+            {selectedSeat.name ? (
+              <><strong>{moveSrcSeat.name}</strong> ↔ <strong>{selectedSeat.name}</strong> 자리를 바꾸시겠습니까?</>
+            ) : (
+              <><strong>{moveSrcSeat.name}</strong> → <strong>{selectedSeat.id}번 자리</strong>로 이동하시겠습니까?</>
+            )}
           </p>
           <div className="flex gap-1.5">
             <button

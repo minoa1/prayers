@@ -62,7 +62,7 @@ export function useSeats() {
         const to = prev.find((s) => s.id === toId);
         if (!from || !to) return prev;
         return prev.map((s) => {
-          if (s.id === fromId) return { ...s, name: null, isGroupLeader: false };
+          if (s.id === fromId) return { ...s, name: to.name, isGroupLeader: to.isGroupLeader };
           if (s.id === toId) return { ...s, name: from.name, isGroupLeader: from.isGroupLeader };
           return s;
         });

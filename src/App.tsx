@@ -94,7 +94,12 @@ export default function App() {
     if (err) {
       showToast(err, false);
     } else {
-      showToast(`${moveSrcSeat.name} → ${toSeatId}번 이동 완료`);
+      const toSeat = seats.find((s) => s.id === toSeatId);
+      if (toSeat?.name) {
+        showToast(`${moveSrcSeat.name} ↔ ${toSeat.name} 자리 교체 완료`);
+      } else {
+        showToast(`${moveSrcSeat.name} → ${toSeatId}번 이동 완료`);
+      }
     }
     setMoveSrcSeat(null);
     setSelectedSeat(null);
