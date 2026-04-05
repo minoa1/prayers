@@ -70,6 +70,14 @@ export default function App() {
       }
       setSelectedSeat(seat);
     } else {
+      // 빈 자리 클릭 시 이미 등록된 자리가 있는지 확인
+      if (seat.name === null) {
+        const mySeat = seats.find((s) => s.name === currentUser);
+        if (mySeat) {
+          showToast(`이미 ${mySeat.row}-${mySeat.col} 자리에 등록되어 있습니다.`, false);
+          return;
+        }
+      }
       setSelectedSeat(seat);
       setShowUserModal(true);
     }
