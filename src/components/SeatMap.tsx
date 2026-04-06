@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Seat } from '../types';
 import SeatCell from './SeatCell';
 
@@ -6,57 +7,90 @@ interface Props {
   selectedSeatId: number | null;
   moveSrcId: number | null;
   isAdminMode: boolean;
+  currentUser: string | null;
   onSeatClick: (seat: Seat) => void;
 }
 
 const ROWS = 16;
 const COLS = 4;
+const ROW_PAIRS = ROWS / 2; // 8개 대그룹
 
 export default function SeatMap({
   seats,
   selectedSeatId,
   moveSrcId,
   isAdminMode,
+  currentUser,
   onSeatClick,
 }: Props) {
   const seatMap = new Map(seats.map((s) => [s.id, s]));
 
-  return (
-    <div className="flex flex-col items-center gap-1.5">
-      {/* 좌석 그리드 */}
-      {Array.from({ length: ROWS }, (_, rowIdx) => {
-        const row = rowIdx + 1;
-        return (
-          <div key={row} className="flex items-center gap-1">
-            {/* 줄 번호 */}
-            <span className="w-6 text-right text-xs text-gray-400 font-mono shrink-0">
-              {row}
-            </span>
+  useEffect(() => {
+    if (!currentUser) return;
+    const hasMySeat = seats.some((s) => s.name === currentUser);
+    if (!hasMySeat) return;
+    const el = document.getElementById('my-seat');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [seats, currentUser]);
 
-            {/* 4자리 동일 간격 */}
-            <div className="flex gap-1.5">
-              {[1, 2, 3, 4].map((col) => {
-                const id = (row - 1) * COLS + col;
-                const seat = seatMap.get(id);
-                if (!seat) return null;
-                return (
-                  <SeatCell
-                    key={id}
-                    seat={seat}
-                    isSelected={selectedSeatId === id}
-                    isMoveTarget={moveSrcId !== null && moveSrcId !== id}
-                    isAdminMode={isAdminMode}
-                    onClick={onSeatClick}
-                  />
-                );
-              })}
+  const renderSubGroup = (rows: number[], cols: number[]) => (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-1.5">
+      {/* 2행 × 2열 */}
+      <div className="flex flex-col gap-1">
+        {rows.map((row) => (
+          <div key={row} className="flex gap-1.5">
+            {cols.map((col) => {
+              const id = (row - 1) * COLS + col;
+              const seat = seatMap.get(id);
+              if (!seat) return null;
+              return (
+                <SeatCell
+                  key={id}
+                  seat={seat}
+                  isSelected={selectedSeatId === id}
+                  isMoveTarget={moveSrcId !== null && moveSrcId !== id}
+                  isAdminMode={isAdminMode}
+                  isMySeat={!isAdminMode && !!currentUser && seat.name === currentUser}
+                  onClick={onSeatClick}
+                />
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col gap-2">
+      {/* 좌석 그리드 */}
+      {Array.from({ length: ROW_PAIRS }, (_, pairIdx) => {
+        const row1 = pairIdx * 2 + 1;
+        const row2 = pairIdx * 2 + 2;
+        return (
+          <div
+            key={pairIdx}
+            className="flex items-stretch gap-1.5 bg-gray-50 rounded-2xl border border-gray-100 px-2 py-2"
+          >
+            {/* 행 번호 */}
+            <div className="flex flex-col justify-around items-end pr-1 shrink-0">
+              <span className="text-[11px] text-gray-400 font-mono">{row1}</span>
+              <span className="text-[11px] text-gray-400 font-mono">{row2}</span>
             </div>
+
+            {/* 왼쪽 조 (col 1-2) */}
+            {renderSubGroup([row1, row2], [1, 2])}
+
+            {/* 오른쪽 조 (col 3-4) */}
+            {renderSubGroup([row1, row2], [3, 4])}
           </div>
         );
       })}
 
       {/* 범례 */}
-      <div className="mt-6 flex gap-3 text-xs text-gray-500 flex-wrap justify-center">
+      <div className="mt-4 flex gap-3 text-xs text-gray-500 flex-wrap justify-center">
         <div className="flex items-center gap-1.5">
           <div className="w-4 h-4 rounded-md bg-white border-2 border-dashed border-gray-300" />
           <span>빈 자리</span>
@@ -69,6 +103,12 @@ export default function SeatMap({
           <div className="w-4 h-4 rounded-md bg-gradient-to-br from-orange-400 to-rose-500" />
           <span>조장 ★</span>
         </div>
+        {!isAdminMode && seats.some((s) => s.name === currentUser) && (
+          <div className="flex items-center gap-1.5">
+            <div className="w-4 h-4 rounded-md bg-gradient-to-br from-emerald-400 to-teal-500" />
+            <span>내 자리</span>
+          </div>
+        )}
         {isAdminMode && (
           <>
             <div className="flex items-center gap-1.5">

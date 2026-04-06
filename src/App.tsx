@@ -220,6 +220,7 @@ export default function App() {
           selectedSeatId={selectedSeat?.id ?? null}
           moveSrcId={moveSrcSeat?.id ?? null}
           isAdminMode={isAdminMode}
+          currentUser={currentUser}
           onSeatClick={handleSeatClick}
         />
       </main>
