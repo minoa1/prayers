@@ -39,7 +39,7 @@ export default function SeatCell({
   }
 
   let ring = '';
-  if (isMySeat) ring = 'ring-2 ring-offset-1 ring-white scale-105';
+  if (isMySeat) ring = 'ring-2 ring-offset-2 ring-yellow-300 animate-pulse scale-110';
   if (isSelected) ring = 'ring-2 ring-offset-2 ring-violet-500 scale-105';
   if (isMoveTarget) ring = 'ring-2 ring-offset-2 ring-emerald-400 animate-pulse scale-105';
 
@@ -54,10 +54,9 @@ export default function SeatCell({
       `}
       title={seat.name ?? `${seat.row}-${seat.col}`}
     >
-      {/* 좌석 위치 */}
       {/* 내 자리 표시 */}
       {isMySeat && (
-        <span className="absolute top-0.5 right-1 text-[9px] text-yellow-200">나</span>
+        <span className="absolute top-0.5 right-1 bg-yellow-400 text-yellow-900 text-[8px] font-extrabold px-1 rounded-full leading-tight">나</span>
       )}
 
       {/* 조장 별 */}
