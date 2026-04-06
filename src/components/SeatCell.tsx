@@ -24,9 +24,11 @@ export default function SeatCell({
   let posStyle = '';
 
   if (isMySeat) {
-    containerStyle = 'bg-gradient-to-br from-emerald-400 to-teal-500 border-2 border-emerald-300 text-white shadow-lg shadow-emerald-200';
+    containerStyle = seat.isGroupLeader
+      ? 'bg-gradient-to-br from-orange-400 to-rose-500 border-2 border-orange-300 text-white shadow-md shadow-orange-200'
+      : 'bg-gradient-to-br from-blue-500 to-indigo-600 border-2 border-blue-400 text-white shadow-md shadow-blue-200';
     labelStyle = 'text-[11px] font-bold drop-shadow-sm';
-    posStyle = 'text-[10px] text-emerald-100';
+    posStyle = seat.isGroupLeader ? 'text-[10px] text-orange-100' : 'text-[10px] text-blue-100';
   } else if (isEmpty) {
     containerStyle = 'bg-white border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 text-gray-300 hover:text-blue-400 shadow-sm';
     labelStyle = 'text-[11px] font-semibold tracking-wide';
@@ -42,7 +44,7 @@ export default function SeatCell({
   }
 
   let ring = '';
-  if (isMySeat) ring = 'ring-2 ring-offset-2 ring-emerald-500 scale-110';
+  if (isMySeat) ring = 'ring-2 ring-offset-1 ring-white scale-105';
   if (isSelected) ring = 'ring-2 ring-offset-2 ring-violet-500 scale-105';
   if (isMoveTarget) ring = 'ring-2 ring-offset-2 ring-emerald-400 animate-pulse scale-105';
 

@@ -103,12 +103,6 @@ export default function SeatMap({
           <div className="w-4 h-4 rounded-md bg-gradient-to-br from-orange-400 to-rose-500" />
           <span>조장 ★</span>
         </div>
-        {!isAdminMode && seats.some((s) => s.name === currentUser) && (
-          <div className="flex items-center gap-1.5">
-            <div className="w-4 h-4 rounded-md bg-gradient-to-br from-emerald-400 to-teal-500" />
-            <span>내 자리</span>
-          </div>
-        )}
         {isAdminMode && (
           <>
             <div className="flex items-center gap-1.5">
