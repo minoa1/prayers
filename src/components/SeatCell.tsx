@@ -51,29 +51,25 @@ export default function SeatCell({
       id={isMySeat ? 'my-seat' : undefined}
       onClick={() => onClick(seat)}
       className={`
-        relative flex-1 min-w-0 h-14 rounded-xl text-xs font-medium cursor-pointer
+        relative flex-1 min-w-0 h-10 rounded-lg text-xs font-medium cursor-pointer
         transition-all duration-150 select-none
         ${containerStyle} ${ring}
       `}
       title={seat.name ?? `${seat.row}-${seat.col}`}
     >
       {/* 좌석 위치 */}
-      <span className={`absolute top-1 left-1.5 font-mono opacity-70 ${posStyle}`}>
-        {seat.row}-{seat.col}
-      </span>
-
       {/* 내 자리 표시 */}
       {isMySeat && (
-        <span className="absolute top-0.5 right-1 text-[11px] text-yellow-200">나</span>
+        <span className="absolute top-0.5 right-1 text-[9px] text-yellow-200">나</span>
       )}
 
       {/* 조장 별 */}
       {seat.isGroupLeader && !isMySeat && (
-        <span className="absolute top-0.5 right-1 text-[11px] text-yellow-200">★</span>
+        <span className="absolute top-0.5 right-1 text-[9px] text-yellow-200">★</span>
       )}
 
       {/* 이름 or 좌석번호 */}
-      <span className={`block px-1 truncate leading-tight mt-4 ${labelStyle}`}>
+      <span className={`block px-1 truncate leading-none mt-2.5 ${labelStyle}`}>
         {isEmpty ? `${seat.row}-${seat.col}` : seat.name}
       </span>
     </button>

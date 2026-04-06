@@ -36,11 +36,11 @@ export default function SeatMap({
   }, [seats, currentUser]);
 
   const renderSubGroup = (rows: number[], cols: number[]) => (
-    <div className="flex-1 min-w-0 bg-white rounded-xl border border-gray-200 shadow-sm p-1.5">
+    <div className="flex-1 min-w-0 bg-white rounded-lg border border-gray-200 shadow-sm p-1">
       {/* 2행 × 2열 */}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-0.5">
         {rows.map((row) => (
-          <div key={row} className="flex gap-1.5">
+          <div key={row} className="flex gap-1">
             {cols.map((col) => {
               const id = (row - 1) * COLS + col;
               const seat = seatMap.get(id);
@@ -64,7 +64,7 @@ export default function SeatMap({
   );
 
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className="flex flex-col gap-1 w-full">
       {/* 좌석 그리드 */}
       {Array.from({ length: ROW_PAIRS }, (_, pairIdx) => {
         const row1 = pairIdx * 2 + 1;
@@ -72,12 +72,12 @@ export default function SeatMap({
         return (
           <div
             key={pairIdx}
-            className="flex items-stretch gap-1.5 bg-gray-50 rounded-2xl border border-gray-100 px-2 py-2"
+            className="flex items-stretch gap-1.5 bg-gray-50 rounded-xl border border-gray-100 px-1.5 py-1.5"
           >
             {/* 행 번호 */}
-            <div className="flex flex-col justify-around items-end pr-1 shrink-0">
-              <span className="text-[11px] text-gray-400 font-mono">{row1}</span>
-              <span className="text-[11px] text-gray-400 font-mono">{row2}</span>
+            <div className="flex flex-col justify-around items-end pr-0.5 shrink-0">
+              <span className="text-[10px] text-gray-400 font-mono">{row1}</span>
+              <span className="text-[10px] text-gray-400 font-mono">{row2}</span>
             </div>
 
             {/* 왼쪽 조 (col 1-2) */}
