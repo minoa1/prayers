@@ -36,7 +36,7 @@ export default function SeatMap({
   }, [seats, currentUser]);
 
   const renderSubGroup = (rows: number[], cols: number[]) => (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-1.5">
+    <div className="flex-1 min-w-0 bg-white rounded-xl border border-gray-200 shadow-sm p-1.5">
       {/* 2행 × 2열 */}
       <div className="flex flex-col gap-1">
         {rows.map((row) => (
@@ -64,7 +64,7 @@ export default function SeatMap({
   );
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full">
       {/* 좌석 그리드 */}
       {Array.from({ length: ROW_PAIRS }, (_, pairIdx) => {
         const row1 = pairIdx * 2 + 1;

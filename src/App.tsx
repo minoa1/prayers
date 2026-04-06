@@ -214,7 +214,7 @@ export default function App() {
       )}
 
       {/* 좌석 배치도 */}
-      <main className="flex justify-center">
+      <main className="flex justify-center w-full">
         <SeatMap
           seats={seats}
           selectedSeatId={selectedSeat?.id ?? null}

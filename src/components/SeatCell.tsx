@@ -51,7 +51,7 @@ export default function SeatCell({
       id={isMySeat ? 'my-seat' : undefined}
       onClick={() => onClick(seat)}
       className={`
-        relative w-28 h-14 rounded-xl text-xs font-medium cursor-pointer
+        relative flex-1 min-w-0 h-14 rounded-xl text-xs font-medium cursor-pointer
         transition-all duration-150 select-none
         ${containerStyle} ${ring}
       `}
