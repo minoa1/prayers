@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Seat } from '../types';
-import { fetchSeats, registerSeat, cancelSeat, adminMoveSeat, adminToggleLeader, adminClearSeat } from '../services/sheetsApi';
+import { fetchSeats, registerSeat, cancelSeat, adminMoveSeat, adminToggleLeader, adminClearSeat, adminResetAll } from '../services/sheetsApi';
 
 function initLocalSeats(): Seat[] {
   const seats: Seat[] = [];
@@ -100,6 +100,18 @@ export function useSeats() {
     []
   );
 
+  const handleAdminResetAll = useCallback(
+    async (password: string): Promise<string | null> => {
+      const res = await adminResetAll(password);
+      if (!res.success) return res.error ?? '초기화 실패';
+      setSeats((prev) =>
+        prev.map((s) => ({ ...s, name: null, isGroupLeader: false }))
+      );
+      return null;
+    },
+    []
+  );
+
   return {
     seats,
     loading,
@@ -110,5 +122,6 @@ export function useSeats() {
     handleAdminMove,
     handleAdminToggleLeader,
     handleAdminClear,
+    handleAdminResetAll,
   };
 }

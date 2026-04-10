@@ -171,6 +171,18 @@ function doGet(e) {
       return createResponse({ success: true });
     }
 
+    // [관리자] 전체 초기화
+    if (action === 'adminResetAll') {
+      if (params.password !== ADMIN_PASSWORD) return createResponse({ success: false, error: '비밀번호가 틀렸습니다.' });
+
+      const data = sheet.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        sheet.getRange(i + 1, 4).setValue('');
+        sheet.getRange(i + 1, 5).setValue(false);
+      }
+      return createResponse({ success: true });
+    }
+
     return createResponse({ success: false, error: `알 수 없는 action: ${action}` });
   } catch (err) {
     return createResponse({ success: false, error: String(err) });

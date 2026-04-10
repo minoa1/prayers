@@ -63,3 +63,7 @@ export async function fetchPrayerTopics(): Promise<string> {
 export async function savePrayerTopics(password: string, text: string): Promise<ApiResponse> {
   return callApi({ action: 'savePrayerTopics', password, text });
 }
+
+export async function adminResetAll(password: string): Promise<ApiResponse> {
+  return callApi({ action: 'adminResetAll', password });
+}

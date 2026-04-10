@@ -16,6 +16,7 @@ export default function App() {
     handleAdminMove,
     handleAdminToggleLeader,
     handleAdminClear,
+    handleAdminResetAll,
   } = useSeats();
 
   const [currentUser, setCurrentUser] = useState<string | null>(null);
@@ -90,6 +91,18 @@ export default function App() {
     setAdminPassword('');
     setSelectedSeat(null);
     setMoveSrcSeat(null);
+  };
+
+  const handleResetAll = async () => {
+    if (!confirm('모든 좌석의 이름과 조장 정보를 초기화하시겠습니까?')) return;
+    const err = await handleAdminResetAll(adminPassword);
+    if (err) {
+      showToast(err, false);
+    } else {
+      showToast('전체 좌석 초기화 완료');
+      setSelectedSeat(null);
+      setMoveSrcSeat(null);
+    }
   };
 
   const handleStartMove = () => {
@@ -182,6 +195,15 @@ export default function App() {
               className="px-3 py-1.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-xs shadow-sm transition-colors"
             >
               관리자 모드 ON
+            </button>
+          )}
+
+          {isAdminMode && (
+            <button
+              onClick={handleResetAll}
+              className="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-xs shadow-sm transition-colors"
+            >
+              초기화
             </button>
           )}
 
